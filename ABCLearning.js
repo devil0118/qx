@@ -16,6 +16,7 @@ if (typeof $response !== "undefined" && $response.body) {
         // 修改 validity_date 为 10 年后的时间戳（秒）
         let tenYearsLater = Math.floor(Date.now() / 1000) + (10 * 365 * 24 * 60 * 60);
         body.data.validity_date = tenYearsLater;
+        console.log("ABC "+body.data)
     }
     
     $response.body = JSON.stringify(body);
