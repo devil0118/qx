@@ -55,6 +55,7 @@ if (obj.data) {
             "buy_content": "激活码",
             "buy_date": todayStr
         }];
+        obj.data.validity_date =  tenYearsLater;
     }
 }
 
