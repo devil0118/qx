@@ -37,7 +37,7 @@ if (obj.data) {
     }
     // validity_date (字符串格式)
     if (obj.data.hasOwnProperty("validity_date") && typeof obj.data.validity_date === "string") {
-        obj.data.validity_date = todayStr;
+        obj.data.validity_date = tenYearsLaterStr;
     }
     // orders 数组
     if (obj.data.orders && Array.isArray(obj.data.orders)) {
@@ -55,7 +55,7 @@ if (obj.data) {
             "buy_content": "激活码",
             "buy_date": todayStr
         }];
-        obj.data.validity_date =  tenYearsLater;
+        obj.data.validity_date =  tenYearsLaterStr;
     }
 }
 
