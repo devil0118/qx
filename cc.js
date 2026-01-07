@@ -1,4 +1,4 @@
-const target = JSON.parse($response.body.raw);
+const target = JSON.parse($response.body);
 // 将所有为 false 的值改为 true
 for (let key in target) {
   if (target[key] === false) {
@@ -20,3 +20,4 @@ if (typeof target.trialLengthDays === 'number' && target.trialLengthDays === 7) 
   target.trialLengthDays = 365;
 }
 $done({ body: JSON.stringify(target) });
+
