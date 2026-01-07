@@ -17,7 +17,7 @@ try {
         obj = body;
     }
     if (obj && obj.data) {
-        obj.data.level = "激活码2";
+        obj.data.level = "激活码";
         obj.data.validity_date = 1861199999;
         body = JSON.stringify(obj);
         console.log("ABCLearning ✅ 修改成功" + body);
