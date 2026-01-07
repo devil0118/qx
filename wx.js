@@ -1,29 +1,26 @@
 var body = $response.body;
 var url = $request.url;
-var obj = JSON.parse(body);
 
 // 处理章节信息接口 - 将付费内容的价格改为0
 if (url.indexOf('/book/ChapterInfos') != -1) {
-    body = obj.replace(/"price":"[0-9.]+/g, '"price":"0')
-              .replace(/"paid":"d/g, '"paid":"0');
+    body = body.replace(/"price":"[0-9.]+/g, '"price":"0')
+               .replace(/"paid":"d/g, '"paid":"0');
 }
 
 // 处理用户资料接口
 if (url.indexOf('/user/profileArticleId') != -1) {
-    body = obj.replace(/location":"[^"]+/g, 'location":"')
-              .replace(/nwesc":"/g, 'nwesc":"n_ad https://t.me/iosapp520');
+    body = body.replace(/location":"[^"]+/g, 'location":"')
+               .replace(/nwesc":"/g, 'nwesc":"https://t.me/iosapp520');
 }
 
 // 处理余额接口 - 修改余额显示
 if (url.indexOf('/pay/balance') != -1) {
-    body = obj.replace(/balance":"[0-9.]+/g, 'balance":"');
+    body = body.replace(/"balance":"[0-9.]+/g, '"balance":"999999');
 }
-
-var obj = JSON.parse(body);
 
 // 处理登录接口 - 模拟VIP会员登录
 if (url.indexOf('/login') != -1) {
-    const obj = {
+    var obj = {
         "vid": 943401887,
         "skey": '0__zhrbh',
         "accessToken": '0__zhrbh',
@@ -42,12 +39,12 @@ if (url.indexOf('/login') != -1) {
 
 // 处理头像上传接口
 if (url.indexOf('upload?type=avatar') != -1) {
-    const obj = {
+    var obj = {
         "url": 'https://telegram-image.pages.dev/file/tcisrieDrtBDsoSes11t.rpg'
     };
     body = JSON.stringify(obj);
 }
-console.log("winxin:====="+body)
+console.log("weixin========"+body)
 $done({
     "body": body
 });
