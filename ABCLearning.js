@@ -20,7 +20,7 @@ try {
     $notify("ABCLearning", "body类型: " + typeof body, "obj类型: " + typeof obj);
     
     if (obj && obj.data) {
-        obj.data.level = "激活码";
+        obj.data.level = "激活码2";
         obj.data.validity_date = Math.floor(Date.now() / 1000) + 315360000;
         body = JSON.stringify(obj);
         $notify("ABCLearning", "✅ 修改成功" + body, "");
