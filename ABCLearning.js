@@ -6,12 +6,11 @@ ABCLearning - user/info
 hostname = ios.abc-learning.net
 */
 
-var body = $response.body;
+if (typeof $response !== "undefined" && $response.body) {
+     let body = JSON.parse($response.body);
+     console.error("原始响应: " + JSON.stringify(body));
+    
 
-try {
-    $notify(body);
-} catch (e) {
-    $notify("ABCLearning", "❌ 错误", String(e));
+     $response.body = JSON.stringify(body);
+    
 }
-
-$done({ body: body });
