@@ -8,7 +8,7 @@ hostname = ios.abc-learning.net
 
 if (typeof $response !== "undefined" && $response.body) {
      let body = JSON.parse($response.body);
-     console.error("原始响应: " + JSON.stringify(body));
+     console.log("原始响应: " + JSON.stringify(body));
     
 
      $response.body = JSON.stringify(body);
