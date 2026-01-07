@@ -1,29 +1,16 @@
-/*
-ABCLearning - user/info
-[rewrite_local]
-^https:\/\/ios\.abc-learning\.net\/api\/v1\/learning\/user\/info url script-response-body ABCLearning.js
-[mitm]
-hostname = ios.abc-learning.net
-*/
-
-var body = $response.body;
-
-try {
-    // 检查是否需要解析
-    var obj;
-    if (typeof body === "string") {
-        obj = JSON.parse(body);
-    } else {
-        obj = body;
-    }
-    if (obj && obj.data) {
+var obj = JSON.parse($response.body);
+var tenYearsLater = Math.floor(Date.now() / 1000) + 315360000;
+if (obj.data) {
+    // 结构1: data 直接包含 level 和 validity_date
+    if (obj.data.hasOwnProperty("level")) {
         obj.data.level = "激活码";
-        obj.data.validity_date = 1861199999;
-        body = JSON.stringify(obj);
-        console.log("ABCLearning ✅ 修改成功" + body);
+        obj.data.validity_date = tenYearsLater;
     }
-} catch (e) {
-    $notify("ABCLearning", "❌ 错误", String(e));
+    
+    // 结构2: data.user 包含 level 和 validity_date
+    if (obj.data.user && obj.data.user.hasOwnProperty("level")) {
+        obj.data.user.level = "激活码";
+        obj.data.user.validity_date = tenYearsLater;
+    }
 }
-
-$done({ body: body });
+$done({ body: JSON.stringify(obj) });
