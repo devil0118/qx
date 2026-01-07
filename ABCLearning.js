@@ -23,7 +23,7 @@ try {
         obj.data.level = "激活码";
         obj.data.validity_date = Math.floor(Date.now() / 1000) + 315360000;
         body = JSON.stringify(obj);
-        $notify("ABCLearning", "✅ 修改成功", "");
+        $notify("ABCLearning", "✅ 修改成功" + body, "");
     }
 } catch (e) {
     $notify("ABCLearning", "❌ 错误", String(e));
