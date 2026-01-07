@@ -18,12 +18,12 @@ if (obj.data) {
     // 结构1: data 直接包含 level
     if (obj.data.hasOwnProperty("level")) {
         obj.data.level = "激活码";
-        obj.data.validity_date =  Math.floor(Date.now() / 1000);
+        obj.data.validity_date =  tenYearsLater;
     }
     // 结构2: data.user 包含 level
     if (obj.data.user) {
         obj.data.user.level = "激活码";
-        obj.data.user.validity_date =  Math.floor(Date.now() / 1000);
+        obj.data.user.validity_date = tenYearsLater;
     }
     
     // ========== account/info 接口 ==========
