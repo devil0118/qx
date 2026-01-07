@@ -19,5 +19,5 @@ if (target.teamMembershipType === "free") {
 if (typeof target.trialLengthDays === 'number' && target.trialLengthDays === 7) {
   target.trialLengthDays = 365;
 }
+console.log("cc:--------"+$response.body)
 $done({ body: JSON.stringify(target) });
-
