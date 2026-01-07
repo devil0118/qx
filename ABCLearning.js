@@ -1,13 +1,15 @@
 /*
 ABCLearning - 完整版
 [rewrite_local]
-^https:\/\/ios\.abc-learning\.net\/api\/v.*\/learning\/(user\/info|account\/info) url script-response-body ABCLearning.js
+^https:\/\/ios\.abc-learning\.net\/api\/v.*\/learning\/(user\/info|account\/info|home\/layout) url script-response-body ABCLearning.js
 [mitm]
 hostname = ios.abc-learning.net
 */
 
 var obj = JSON.parse($response.body);
-var tenYearsLater = Math.floor(Date.now() / 1000) + 315360000;
+var now = Math.floor(Date.now() / 1000);
+var twoYearsLater = now + 63072000;
+var tenYearsLater = now + 315360000;
 var today = new Date();
 var todayStr = today.getFullYear() + "." + String(today.getMonth() + 1).padStart(2, "0") + "." + String(today.getDate()).padStart(2, "0");
 var tenYearsLaterStr = (today.getFullYear() + 10) + "." + String(today.getMonth() + 1).padStart(2, "0") + "." + String(today.getDate()).padStart(2, "0");
@@ -18,7 +20,7 @@ if (obj.data) {
     // 结构1: data 直接包含 level
     if (obj.data.hasOwnProperty("level")) {
         obj.data.level = "激活码";
-        obj.data.validity_date =  tenYearsLater;
+        obj.data.validity_date = tenYearsLater;
     }
     // 结构2: data.user 包含 level
     if (obj.data.user) {
@@ -55,7 +57,21 @@ if (obj.data) {
             "buy_content": "激活码",
             "buy_date": todayStr
         }];
-        obj.data.validity_date =  tenYearsLaterStr;
+        obj.data.validity_date = tenYearsLaterStr;
+    }
+    
+    // ========== home/layout 接口 (新增) ==========
+    // free_chat_count
+    if (obj.data.hasOwnProperty("free_chat_count")) {
+        obj.data.free_chat_count = 100;
+    }
+    // vip_expire_time (两年后时间戳)
+    if (obj.data.hasOwnProperty("vip_expire_time")) {
+        obj.data.vip_expire_time = twoYearsLater;
+    }
+    // vip_name
+    if (obj.data.hasOwnProperty("vip_name")) {
+        obj.data.vip_name = "激活码";
     }
 }
 
