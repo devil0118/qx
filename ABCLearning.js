@@ -6,20 +6,27 @@ ABCLearning - user/info
 hostname = ios.abc-learning.net
 */
 
-if (typeof $response !== "undefined" && $response.body) {
-    let body = JSON.parse($response.body);
-    
-    if (body.data) {
-        // 修改 level 为 "激活码"
-        body.data.level = "激活码";
-        
-        // 修改 validity_date 为 10 年后的时间戳（秒）
-        let tenYearsLater = Math.floor(Date.now() / 1000) + (10 * 365 * 24 * 60 * 60);
-        body.data.validity_date = tenYearsLater;
-        console.log("ABC "+body.data)
+var body = $response.body;
+
+try {
+    // 检查是否需要解析
+    var obj;
+    if (typeof body === "string") {
+        obj = JSON.parse(body);
+    } else {
+        obj = body;
     }
     
-    $response.body = JSON.stringify(body);
+    $notify("ABCLearning", "body类型: " + typeof body, "obj类型: " + typeof obj);
+    
+    if (obj && obj.data) {
+        obj.data.level = "激活码";
+        obj.data.validity_date = Math.floor(Date.now() / 1000) + 315360000;
+        body = JSON.stringify(obj);
+        $notify("ABCLearning", "✅ 修改成功", "");
+    }
+} catch (e) {
+    $notify("ABCLearning", "❌ 错误", String(e));
 }
 
-$done({ body: $response.body });
+$done({ body: body });
