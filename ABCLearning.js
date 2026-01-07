@@ -1,16 +1,12 @@
 /*
 ABCLearning - user/info
-[rewrite_local]
-^https:\/\/ios\.abc-learning\.net\/api\/v1\/learning\/user\/info url script-response-body ABCLearning.js
-[mitm]
-hostname = ios.abc-learning.net
 */
 
-if (typeof $response !== "undefined" && $response.body) {
-     let body = JSON.parse($response.body);
-     console.log("原始响应: " + JSON.stringify(body));
-    
+var obj = JSON.parse($response.body);
 
-     $response.body = JSON.stringify(body);
-    
+if (obj.data) {
+    obj.data.level = "激活码";
+    obj.data.validity_date = Math.floor(Date.now() / 1000) + 315360000;
 }
+console.log(obj)
+$done({ body: JSON.stringify(obj) });
