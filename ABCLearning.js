@@ -1,37 +1,29 @@
 /*
-ABCLearning - Debug Version (Error Level)
+ABCLearning - Notify Debug
 */
-
-// 调试：打印请求信息
-console.error("========== ABCLearning 脚本开始 ==========");
-console.error("请求 URL: " + $request.url);
 
 if (typeof $response !== "undefined" && $response.body) {
     let body = JSON.parse($response.body);
+    let modCount = 0;
     
-    // 调试：打印原始响应（截取前500字符避免太长）
-    console.error("原始响应: " + JSON.stringify(body).substring(0, 500));
-    
-    function modifyObject(obj, path = "") {
+    function modifyObject(obj) {
         for (let key in obj) {
             if (obj.hasOwnProperty(key)) {
-                let currentPath = path ? path + "." + key : key;
-                
                 if (typeof obj[key] === "object" && obj[key] !== null) {
-                    modifyObject(obj[key], currentPath);
+                    modifyObject(obj[key]);
                 } else {
                     switch (key) {
                         case "is_vip":
-                            console.error("🔧 修改 " + currentPath + ": " + obj[key] + " -> 1");
                             obj[key] = 1;
+                            modCount++;
                             break;
                         case "is_lock":
-                            console.error("🔓 修改 " + currentPath + ": " + obj[key] + " -> 0");
                             obj[key] = 0;
+                            modCount++;
                             break;
                         case "is_free":
-                            console.error("🆓 修改 " + currentPath + ": " + obj[key] + " -> 1");
                             obj[key] = 1;
+                            modCount++;
                             break;
                     }
                 }
@@ -42,12 +34,10 @@ if (typeof $response !== "undefined" && $response.body) {
     modifyObject(body);
     $response.body = JSON.stringify(body);
     
-    // 调试：打印修改后响应（截取前500字符）
-    console.error("修改后响应: " + $response.body.substring(0, 500));
+    // 弹出通知显示结果
+    $notify("ABCLearning", "修改了 " + modCount + " 个字段", $request.url);
 } else {
-    console.error("⚠️ 响应体为空或不存在");
+    $notify("ABCLearning", "⚠️ 响应体为空", $request.url);
 }
-
-console.error("========== ABCLearning 脚本结束 ==========");
 
 $done({ body: $response.body });
