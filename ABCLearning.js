@@ -46,6 +46,7 @@ if (obj.data) {
         obj.data.orders.forEach(function(order) {
             order.end_date = tenYearsLaterStr;
             order.buy_content = "激活码";
+            order.state = "使用中";
             order.buy_date = todayStr; 
         });
     }
