@@ -97,17 +97,17 @@ function processServerConfig(server, template, isPro = false) {
 
 // 主处理逻辑
 async function handleCatVPNResponse() {
-  log("开始处理CatVPN节点响应数据");
+  console.log("开始处理CatVPN节点响应数据");
   const originalBody = $response.body;
   if (!originalBody) {
-    log("原始响应数据为空");
+    console.log("原始响应数据为空");
     showNotification("CatVPN节点提取失败", "", "响应数据为空");
     return done({ body: originalBody });
   }
 
   const responseData = safeJsonParse(originalBody);
   if (!responseData?.entries?.wind_servers) {
-    log("未找到wind_servers字段");
+    console.log("未找到wind_servers字段");
     showNotification("CatVPN节点提取失败", "", "响应数据格式错误");
     return done({ body: originalBody });
   }
@@ -115,6 +115,7 @@ async function handleCatVPNResponse() {
   try {
     // Base64解码节点数据
     const windServersBase64 = responseData.entries.wind_servers;
+    console.log("windServersBase64:-----"+windServersBase64);
     let windServersJson = '';
     if (typeof atob === 'function') {
       windServersJson = atob(windServersBase64);
