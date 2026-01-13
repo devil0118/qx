@@ -41,6 +41,9 @@ if (obj.data) {
     if (obj.data.hasOwnProperty("validity_date") && typeof obj.data.validity_date === "string") {
         obj.data.validity_date = tenYearsLaterStr;
     }
+    if (obj.data.hasOwnProperty("levels")) {
+        obj.data.levels = ["AllLevel"];  // ✅ 添加这行
+    }
     // orders 数组
     if (obj.data.orders && Array.isArray(obj.data.orders)) {
         obj.data.orders.forEach(function(order) {
