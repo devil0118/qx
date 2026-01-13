@@ -1,11 +1,3 @@
-/*
-ABCLearning - 完整版
-[rewrite_local]
-^https:\/\/ios\.abc-learning\.net\/api\/v.*\/learning\/(user\/info|account\/info|home\/layout) url script-response-body ABCLearning.js
-[mitm]
-hostname = ios.abc-learning.net
-*/
-
 var obj = JSON.parse($response.body);
 var now = Math.floor(Date.now() / 1000);
 var twoYearsLater = now + 63072000;
