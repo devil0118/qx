@@ -124,7 +124,7 @@ async function handleCatVPNResponse() {
     } else {
       throw new Error("当前环境不支持Base64解码");
     }
-
+    console.log("windServersJson:-----"+windServersJson);
     const windServers = JSON.parse(windServersJson);
     const freeServers = windServers.free_servers || [];
     const proServers = windServers.pro_servers || [];
