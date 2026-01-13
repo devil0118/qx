@@ -1,0 +1,29 @@
+proxies:
+  - name: "Russia-Hy2-1"
+    type: hysteria2
+    server: 213.165.60.13
+    port: 34119
+    password: a5c9f030-b683-44e5-85dc-790d2d5a525e
+    sni: lenta.ru
+    skip-cert-verify: true
+  - name: "Russia-Hy2-2"
+    type: hysteria2
+    server: 89.23.113.154
+    port: 37455
+    password: 343ab190-7eb0-427f-817e-49c214775cda
+    sni: lenta.ru
+    skip-cert-verify: true
+  - name: "Russia-Hy2-3"
+    type: hysteria2
+    server: 212.192.14.143
+    port: 31732
+    password: 63a2cb60-869a-4200-a9f1-dbcd8929efde
+    sni: lenta.ru
+    skip-cert-verify: true
+proxy-groups:
+  - name: Proxy
+    type: select
+    proxies:
+      - Russia-Hy2-1
+      - Russia-Hy2-2
+      - Russia-Hy2-3
