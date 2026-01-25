@@ -15,7 +15,7 @@ var obj = {};
 
 try {
     obj = JSON.parse(body);
-    
+    console.log("obj====="+obj);
     // 设定过期时间为 2099-12-31 (时间戳：4102444800)
     const vipTime = "4102444800.00000"; 
 
