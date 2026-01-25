@@ -21,15 +21,22 @@ hostname = buy.itunes.apple.com
 
 console.log("1===============start");
 const ddm = JSON.parse($response.body);
-console.log("ddm:===="+ddm);
+
 const ua = $request.headers["User-Agent"] || $request.headers["user-agent"];
 const bundle_id = ddm.receipt["bundle_id"] || ddm.receipt["Bundle_Id"];
 const yearid = `${bundle_id}.year`;
 const yearlyid = `${bundle_id}.yearly`;
 const yearlysubscription = `${bundle_id}.yearlysubscription`;
 const lifetimeid = `${bundle_id}.lifetime`;
-
+console.log("ua======="+ua);
+console.log("bundle_id======="+bundle_id);
+console.log("yearid======="+yearid);
+console.log("yearlyid======="+yearlyid);
+console.log("lifetimeid======="+lifetimeid);
+lifetimeid = "com.imxiaozhi.HttpCatcher.Pro";
+console.log("lifetimeid======="+lifetimeid);
 const list = {
+  'HttpCatcher': { cm: 'timeb', hx: 'hxpda', id: "com.imxiaozhi.HttpCatcher.Pro", latest: "ddm1023" },
   'PulseWatch': { cm: 'timeb', hx: 'hxpda', id: "relaxlife_ebp", latest: "ddm1023" }, //RelaxWatch:AI智能压力监测
   'PicCompress': { cm: 'timea', hx: 'hxpda', id: "pc_vip_new_1y", latest: "ddm1023" }, //图片压缩
   'XiangCePhoto': { cm: 'timeb', hx: 'hxpda', id: "ql128", latest: "ddm1023" }, //相册清理-删除重复照片
