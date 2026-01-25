@@ -12,8 +12,8 @@
 **************************************
 
 [rewrite_local]
-^https?:\/\/buy\.itunes\.apple\.com\/verifyReceipt$ url script-response-body https://raw.githubusercontent.com/chxm1023/Rewrite/main/iTunes.js
-^https?:\/\/mzstorekit\.itunes\.apple\.com\/inApps\/v1\/.* url script-response-body script-response-body https://raw.githubusercontent.com/chxm1023/Rewrite/main/iTunes.js
+^https?:\/\/buy\.itunes\.apple\.com\/verifyReceipt$ url script-response-body https://raw.githubusercontent.com/devil0118/qx/refs/heads/main/ituns.js
+^https?:\/\/mzstorekit\.itunes\.apple\.com\/inApps\/v1\/.* url script-response-body script-response-body https://raw.githubusercontent.com/devil0118/qx/refs/heads/main/ituns.js
 [mitm]
 hostname = buy.itunes.apple.com, mzstorekit.itunes.apple.com
 
