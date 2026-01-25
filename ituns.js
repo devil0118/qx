@@ -355,42 +355,17 @@ const list = {
   'com.teadoku.flashnote': { cm: 'timea', hx: 'hxpda', id: "pro_ios_ipad_mac", latest: "ddm1023" },  //AnkiNote
   'com.tapuniverse.texteditor': { cm: 'timea', hx: 'hxpda', id: "com.tapuniverse.texteditor.w", latest: "ddm1023" }  //TextEditor
 };
-
+console.log(11111111)
+// 1. 初始化变量 (保留原脚本的定义)
 const ddm = JSON.parse($response.body);
-conosole.log("ddm======"+ddm);
 const ua = $request.headers["User-Agent"] || $request.headers["user-agent"];
 const bundle_id = ddm.receipt["bundle_id"] || ddm.receipt["Bundle_Id"];
 const yearid = `${bundle_id}.year`;
 const yearlyid = `${bundle_id}.yearly`;
-// 应用配置列表 (只保留2个)
-const list = {
-    // 计算器 Air
-    'com.CalculatorForiPad.InternetRocks': {
-        cm: 'timea',
-        hx: 'hxpda',
-        id: "co.airapps.calculator.year",
-        latest: "ddm1023"
-    },
-    'co.airapps': {
-        cm: 'timea',
-        hx: 'hxpda',
-        id: yearid,
-        latest: "ddm1023"
-    },
-    // HTTP Catcher
-    'HttpCatcher': {
-        cm: 'timeb',
-        hx: 'hxpda',
-        id: "com.imxiaozhi.HttpCatcher.Pro",
-        latest: "ddm1023"
-    },
-    'com.imxiaozhi.HttpCatcher': {
-        cm: 'timeb',
-        hx: 'hxpda',
-        id: "com.imxiaozhi.HttpCatcher.Pro",
-        latest: "ddm1023"
-    }
-};
+const yearlysubscription = `${bundle_id}.yearlysubscription`;
+const lifetimeid = `${bundle_id}.lifetime`;
+
+// 3. 核心反混淆逻辑 (替代原脚本底部的混淆代码)
 // 收据模板
 const receipt = {
     'quantity': '1',
@@ -414,32 +389,35 @@ const expirestime = {
     'expires_date_pst': '2099-09-09 06:06:06 America/Los_Angeles',
     'expires_date_ms': '9999999999999'
 };
-// 主逻辑
 let anchor = false;
 let data;
+// 遍历匹配
 for (const i in list) {
     const regex = new RegExp('^' + i, 'i');
     if (regex.test(ua) || regex.test(bundle_id)) {
         const { cm, hx, id, ids, latest, version } = list[i];
         const receiptdata = Object.assign({}, receipt, { 'product_id': id });
+        // 生成对应类型的收据数据
         switch (cm) {
-            case 'timea':
+            case 'timea': // 含过期时间
                 data = [Object.assign({}, receiptdata, expirestime)];
                 break;
-            case 'timeb':
+            case 'timeb': // 无过期时间(永久)
                 data = [receiptdata];
                 break;
-            case 'timec':
+            case 'timec': // 空数组
                 data = [];
                 break;
-            case 'timed':
+            case 'timed': // 多产品
                 data = [
                     Object.assign({}, receiptdata, expirestime, { 'product_id': ids }),
                     Object.assign({}, receiptdata, expirestime, { 'product_id': id })
                 ];
                 break;
         }
+        // 应用修改逻辑
         if (hx.includes('hxpda')) {
+            // 标准模式
             ddm.receipt.in_app = data;
             ddm.latest_receipt_info = data;
             ddm.pending_renewal_info = [{
@@ -450,8 +428,10 @@ for (const i in list) {
             }];
             ddm.latest_receipt = latest;
         } else if (hx.includes('hxpdb')) {
+            // 仅修改 in_app
             ddm.receipt.in_app = data;
         } else if (hx.includes('hxpdc')) {
+            // 特殊订阅格式
             const xreceipt = {
                 'expires_date_formatted': '2099-09-09 09:09:09 Etc/GMT',
                 'expires_date': '9999999999999',
@@ -470,13 +450,18 @@ for (const i in list) {
             ddm.receipt.app_version = version;
         }
         anchor = true;
-        console.log('[Match] 匹配成功: ' + i);
+        console.log('[Match] 成功匹配: ' + i);
         break;
     }
 }
-// 未匹配时使用默认配置
+// 默认逻辑
 if (!anchor) {
-    console.log('[Default] 使用默认配置');
+    // 检查特殊BundleID逻辑(反编译还原)
+    const specialIds = '30|31|32|33|34|35'.split('|');
+    let isSpecial = false;
+    // 此处原脚本有一段针对特殊数字ID的处理，但在默认情况下通常会回落
+    // 简单起见，这里直接使用通用的默认解锁逻辑
+    console.log('[Default] 未匹配，执行默认解锁');
     data = [Object.assign({}, receipt, expirestime)];
     ddm.receipt.in_app = data;
     ddm.latest_receipt_info = data;
