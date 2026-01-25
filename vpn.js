@@ -4,7 +4,7 @@
 使用方法：在 Quantumult X 中配置重写规则
 
 [rewrite_local]
-^https?:\/\/online\.altovate\.xyz\/api\/v1\/ url script-response-body https://raw.githubusercontent.com/yourname/scripts/master/vpn_crack.js
+^https?:\/\/online\.altovate\.xyz\/api\/v1\/ url script-response-body https://github.com/devil0118/qx/raw/refs/heads/main/vpn.js
 
 [mitm]
 hostname = online.altovate.xyz
