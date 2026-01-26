@@ -11,10 +11,10 @@ hostname = buy.itunes.apple.com, cnc07api.cnc07.com
 console.log("3333==========");
 let body = $response.body;
 let url = $request.url;
-if (url.includes("itunes.apple.com")) {
+// --- 逻辑 1: iTunes 验证 (恢复订阅) ---
+if (url.includes("verifyReceipt")) {
     let obj = JSON.parse(body);
-    // 修正 Product ID 为 App 二进制中存在的 ID
-    const productID = "com.yearPackage"; 
+    const productID = "com.yearPackage"; // 核心修正
     const bundleID = "com.iuiosappijs";
     
     obj.status = 0;
@@ -25,32 +25,49 @@ if (url.includes("itunes.apple.com")) {
             "purchase_date_ms": "9999999999999",
             "transaction_id": "490001314520000",
             "product_id": productID,
+            "original_transaction_id": "490001314520000",
+            "purchase_date": "2099-09-09 09:09:09 Etc/GMT",
             "expires_date": "2099-09-09 09:09:09 Etc/GMT",
             "expires_date_ms": "9999999999999"
         }]
     };
     obj.latest_receipt_info = obj.receipt.in_app;
+    obj.pending_renewal_info = [{
+        "product_id": productID,
+        "auto_renew_status": "1"
+    }];
+    
     $done({ body: JSON.stringify(obj) });
-} 
-if (url.includes("cnc07api")) {
-    // 如果返回是明文 JSON，则尝试解锁 VIP 字段
+}
+// --- 逻辑 2: 私有域名 API ---
+if (url.includes("cnc07iuapis")) {
+    // 强制返回 200 并注入 VIP 标志
+    // 即使服务器返回的是 304 也会被此处重写
+    let finalBody = body || "{}";
     try {
-        let obj = JSON.parse(body);
-        if (obj.data) {
-            // 遍历所有线路或节点，设为 VIP 可用
-            if (Array.isArray(obj.data)) {
-                obj.data.forEach(item => {
-                    if (item.hasOwnProperty('vpnVip')) item.vpnVip = 1;
-                });
-            } else if (typeof obj.data === 'object') {
-                if (obj.data.hasOwnProperty('vpnVip')) obj.data.vpnVip = 1;
-            }
+        let obj = JSON.parse(finalBody);
+        
+        // 修正用户状态
+        obj.vpnVip = 1;
+        obj.isVip = 1; // 备选字段
+        
+        // 修正线路列表中的 VIP 标志
+        if (obj.data && Array.isArray(obj.data)) {
+            obj.data = obj.data.map(item => {
+                item.vpnVip = 1;
+                item.iscode = 1;
+                return item;
+            });
         }
-        if (obj.hasOwnProperty('vpnVip')) obj.vpnVip = 1;
-        $done({ body: JSON.stringify(obj) });
+        
+        $done({ 
+            status: "HTTP/1.1 200 OK", 
+            body: JSON.stringify(obj) 
+        });
     } catch (e) {
-        // 如果是加密数据，则保持原样（需进一步破解 key）
         $done({});
     }
+}
+$done({});
 }
 $done({});
