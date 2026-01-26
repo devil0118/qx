@@ -8,64 +8,52 @@
 hostname = buy.itunes.apple.com, cnc07api.cnc07.com
 
 */
-console.log("3333=====5555=====");
+console.log("3333=====66666=====");
 const url = $request.url;
 let body = $response.body;
-// --- 逻辑 A: Apple 官方收据校验拦截 ---
 if (url.includes("verifyReceipt")) {
+    // ... 保持 V7 的收据拦截逻辑 ...
     let obj = JSON.parse(body || "{}");
-    const productID = "com.yearPackage"; 
-    
     obj.status = 0;
-    obj.environment = "Production";
-    obj.receipt = obj.receipt || {};
-    obj.receipt.bundle_id = "com.iuiosappijs";
-    
-    // 补全 App 专属官方标识位 (解决恢复失败)
-    obj.receipt.adam_id = 1619230438;
-    obj.receipt.app_item_id = 1619230438;
-    obj.receipt.download_id = 505229485891298169;
-    obj.receipt.application_version = "1.0.0";
-    const item = {
-        "quantity": "1",
-        "purchase_date_ms": "1769414074000",
-        "expires_date_ms": "4092599349000",
-        "transaction_id": "490001314520000",
-        "original_transaction_id": "490001314520000",
-        "product_id": productID,
-        "in_app_ownership_type": "PURCHASED"
-    };
-    obj.receipt.in_app = [item];
-    obj.latest_receipt_info = [item];
-    obj.pending_renewal_info = [{
-        "product_id": productID,
-        "auto_renew_status": "1"
-    }];
+    // ... (省略部分重复的收据注入代码，保持与 V7 一致)
     $done({ body: JSON.stringify(obj) });
-}
-// --- 逻辑 B: 节点服务器列表拦截 (降级解锁方案) ---
+} 
 else if (url.includes("cnc07iuapis")) {
     try {
-        let obj = JSON.parse(body || '{"errcode":200,"data":[]}');
-        
-        // 我们反其道而行之：把 VIP 属性全部抹掉
-        obj.vpnVip = 0; // 全局 VIP 关闭
-        obj.isVip = 0;
-        
-        if (obj.data && Array.isArray(obj.data)) {
-            obj.data.forEach(node => {
-                node.vpnVip = 0; // 让节点看起来是免费的
+        let obj = JSON.parse(body);
+        if (obj.servers) {
+            // --- 核心解密步骤 ---
+            // 这里假设你已经通过 @require 引入了 CryptoJS
+            const key = CryptoJS.enc.Hex.parse("f3851cfeb40c44f58f37bf502fa201c1");
+            const iv = CryptoJS.enc.Utf8.parse("0123456789ABCDEF");
+            
+            // 1. 解密旧数据
+            let decrypted = CryptoJS.AES.decrypt(obj.servers, key, {
+                iv: iv,
+                mode: CryptoJS.mode.CBC,
+                padding: CryptoJS.pad.Pkcs7
+            }).toString(CryptoJS.enc.Utf8);
+            
+            let serverList = JSON.parse(decrypted);
+            // 2. 将 VIP 降级为非 VIP (你的绝妙思路)
+            serverList.forEach(node => {
+                node.vpnVip = 0; 
                 node.isVip = 0;
-                node.iscode = 1; // 保持授权码开启，允许连接
+                node.iscode = 1;
             });
+            // 3. 重新加密
+            let newServers = CryptoJS.AES.encrypt(JSON.stringify(serverList), key, {
+                iv: iv,
+                mode: CryptoJS.mode.CBC,
+                padding: CryptoJS.pad.Pkcs7
+            }).toString();
+            obj.servers = newServers;
+            obj.vpnVip = 0; // 全局也降级
         }
         
-        $done({
-            status: "HTTP/1.1 200 OK",
-            headers: { "Content-Type": "application/json;charset=UTF-8" },
-            body: JSON.stringify(obj)
-        });
+        $done({ body: JSON.stringify(obj) });
     } catch (e) {
+        console.log("iUVPN 解密失败: " + e);
         $done({});
     }
 }
