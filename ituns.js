@@ -366,6 +366,7 @@ for (const i in list) {
                 'auto_renew_product_id': id,
                 'auto_renew_status': '1'
             }];
+            ddm.status = 0;
             ddm.latest_receipt = latest;
         } else if (hx.includes('hxpdb')) {
             // 仅修改 in_app
@@ -409,3 +410,4 @@ if (!anchor) {
     ddm.latest_receipt = 'ddm1023';
 }
 $done({ 'body': JSON.stringify(ddm) });
+
