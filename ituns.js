@@ -40,7 +40,7 @@ const yearlysubscription = `${bundle_id}.yearlysubscription`;
 const lifetimeid = `${bundle_id}.lifetime`;
 // 2. 配置列表
 const list = {
-    'com.x1vpn.xiashijsq': { cm: 'timea', hx: 'hxpda', id: 'com.x1vpn.vipAnnual', latest: 'MII...' },
+    'com.x1vpn.xiashijsq': { cm: 'timea', hx: 'hxpda', id: 'com.x1vpn.vipAnnual', latest: 'ddm1023' },
     'qkvpn': { cm: 'timeb', hx: 'hxpda', id: "gold_yearly", latest: "ddm1023" },
     'HttpCatcher': { cm: 'timeb', hx: 'hxpda', id: "com.imxiaozhi.HttpCatcher.Pro", latest: "ddm1023" },
     'PulseWatch': { cm: 'timeb', hx: 'hxpda', id: "relaxlife_ebp", latest: "ddm1023" },
@@ -378,7 +378,12 @@ for (const i in list) {
                 'auto_renew_status': '1'
             }];
             ddm.status = 0;
-            ddm.latest_receipt = latest;
+            // Fix: Preserve original receipt if possible to bypass local signature check
+            if (ddm.latest_receipt) {
+                console.log("[Fix] Preserving original latest_receipt");
+            } else {
+                ddm.latest_receipt = latest;
+            }
         } else if (hx.includes('hxpdb')) {
             // 仅修改 in_app
             ddm.receipt.in_app = data;
@@ -420,4 +425,6 @@ if (!anchor) {
     }];
     ddm.latest_receipt = 'ddm1023';
 }
-$done({ 'body': JSON.stringify(ddm) });
+$done({
+    'body': JSON.stringify(ddm)
+});
