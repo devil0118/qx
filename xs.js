@@ -11,59 +11,43 @@ hostname = buy.itunes.apple.com, cnc07api.cnc07.com
 console.log("3333=====4444=====");
 let body = $response.body;
 let url = $request.url;
-// --- 逻辑 1: iTunes 验证 (恢复订阅) ---
 if (url.includes("verifyReceipt")) {
     let obj = JSON.parse(body);
-    const productID = "com.yearPackage"; // 核心修正
+    const productID = "com.yearPackage"; // 已确认的硬编码 ID
     const bundleID = "com.iuiosappijs";
     
-    obj.status = 0;
-    obj.receipt = {
-        "bundle_id": bundleID,
-        "in_app": [{
-            "quantity": "1",
-            "purchase_date_ms": "9999999999999",
-            "transaction_id": "490001314520000",
-            "product_id": productID,
-            "original_transaction_id": "490001314520000",
-            "purchase_date": "2099-09-09 09:09:09 Etc/GMT",
-            "expires_date": "2099-09-09 09:09:09 Etc/GMT",
-            "expires_date_ms": "9999999999999"
-        }]
-    };
-    obj.latest_receipt_info = obj.receipt.in_app;
-    obj.pending_renewal_info = [{
+    // 构造订阅条目
+    const subscriptionEntry = {
+        "quantity": "1",
+        "purchase_date_ms": "1769414074000",
+        "expires_date": "2099-09-09 09:09:09 Etc/GMT",
+        "expires_date_ms": "4092599349000",
+        "transaction_id": "490001314520000",
+        "original_transaction_id": "490001314520000",
         "product_id": productID,
-        "auto_renew_status": "1"
-    }];
+        "in_app_ownership_type": "PURCHASED",
+        "original_purchase_date_ms": "1769414074000"
+    };
+    // 核心注入：修改 receipt 内部的 in_app
+    if (obj.receipt) {
+        obj.receipt.in_app = [subscriptionEntry];
+    }
+    
+    // 同时修改最新收据信息
+    obj.latest_receipt_info = [subscriptionEntry];
+    obj.status = 0;
     
     $done({ body: JSON.stringify(obj) });
-}
-// --- 逻辑 2: 私有域名 API ---
+} 
+// 私有 API 拦截逻辑保持不变，用于解锁后端列表状态
 if (url.includes("cnc07iuapis")) {
-    // 强制返回 200 并注入 VIP 标志
-    // 即使服务器返回的是 304 也会被此处重写
-    let finalBody = body || "{}";
     try {
-        let obj = JSON.parse(finalBody);
-        
-        // 修正用户状态
+        let obj = JSON.parse(body || "{}");
         obj.vpnVip = 1;
-        obj.isVip = 1; // 备选字段
-        
-        // 修正线路列表中的 VIP 标志
         if (obj.data && Array.isArray(obj.data)) {
-            obj.data = obj.data.map(item => {
-                item.vpnVip = 1;
-                item.iscode = 1;
-                return item;
-            });
+            obj.data.forEach(item => { item.vpnVip = 1; });
         }
-        
-        $done({ 
-            status: "HTTP/1.1 200 OK", 
-            body: JSON.stringify(obj) 
-        });
+        $done({ status: "HTTP/1.1 200 OK", body: JSON.stringify(obj) });
     } catch (e) {
         $done({});
     }
