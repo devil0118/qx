@@ -29,7 +29,7 @@ const yearlysubscription = `${bundle_id}.yearlysubscription`;
 const lifetimeid = `${bundle_id}.lifetime`;
 // 2. 配置列表
 const list = {
-    'com.x1vpn.xiashijsq': { cm: 'timea', hx: 'hxpda', id: 'com.x1vpn.vipAnnual', latest: 'ddm1023' },
+    'com.x1vpn.xiashijsq': { cm: 'timea', hx: 'hxpda', id: 'com.x1vpn.vipAnnual', latest: 'MII...' },
     'qkvpn': { cm: 'timeb', hx: 'hxpda', id: "gold_yearly", latest: "ddm1023" },
     'HttpCatcher': { cm: 'timeb', hx: 'hxpda', id: "com.imxiaozhi.HttpCatcher.Pro", latest: "ddm1023" },
     'PulseWatch': { cm: 'timeb', hx: 'hxpda', id: "relaxlife_ebp", latest: "ddm1023" },
