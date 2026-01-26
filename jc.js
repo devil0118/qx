@@ -2,7 +2,7 @@
 
 [rewrite_local]
 # 匹配 juejueziapi.com 下的所有 API 请求并修改响应体
-^https?:\/\/.*juejueziapi\.com\/api\/.* url script-response-body https://raw.githubusercontent.com/devil0118/qx/refs/heads/main/jc.js
+^https?:\/\/.*juejueziapi\.com\/.* url script-response-body https://raw.githubusercontent.com/devil0118/qx/refs/heads/main/jc.js
 
 [mitm]
 hostname = *.juejueziapi.com
