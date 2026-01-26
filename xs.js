@@ -1,22 +1,25 @@
-/**
-
+/*
 [rewrite_local]
-^http:\/\/43\.155\.109\.221\/servers\/index\.txt$ url script-response-body https://raw.githubusercontent.com/devil0118/qx/refs/heads/main/xs.js
-
+^https://api.purchasely.io/paab/user_purchases url script-response-body https://raw.githubusercontent.com/devil0118/qx/refs/heads/main/xs.js
 [mitm]
-hostname = 43.155.109.221
-
+hostname = api.purchasely.io
 */
 
-const body = $response.body;
-console.log("[Xiashi Server] Processing list...");
+var body = JSON.parse($response.body);
 
-// Replace VIP flag '1' with '0' (Free)
-// Pattern looks like: IP, Flag, Country, ...
-// Example: 146.190.157.232, 1,h;
-// We look for ", 1," or ", 1" followed by boundaries.
+var premiumSubscription = {
+  "id": "11111111-2222-3333-4444-555555555555",
+  "plan_id": "ios_vpn360_365_99.99_trial",  // <--- 使用这个 ID
+  "next_renewal_at": "2026-12-31T23:59:59Z",
+  "purchase_token": "sandbox_token",
+  "offer_type": "FREE_TRIAL",
+  "original_purchased_at": "2026-01-01T00:00:00Z",
+  "subscription_status": "AUTO_RENEWING",
+  "store_country": "CN",
+  "environment": "PRODUCTION",
+  "is_family_shared": false,
+  "store_type": "APPLE_APP_STORE"
+};
 
-const newBody = body.replace(/(,\s*)1(\s*,)/g, '$10$2');
-
-console.log("[Xiashi Server] Patch applied (VIP -> Free)");
-$done({ body: newBody });
+body.active_subscriptions = [premiumSubscription];
+$done({ body: JSON.stringify(body) });
