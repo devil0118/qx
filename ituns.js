@@ -22,7 +22,18 @@ console.log("11111111===========")
 // 1. 初始化变量
 const ddm = JSON.parse($response.body);
 const ua = $request.headers["User-Agent"] || $request.headers["user-agent"];
-const bundle_id = ddm.receipt["bundle_id"] || ddm.receipt["Bundle_Id"];
+// Fix: Handle missing receipt/bundle_id (e.g. status 21007)
+let bundle_id = "";
+if (ddm.receipt && (ddm.receipt.bundle_id || ddm.receipt.Bundle_Id)) {
+    bundle_id = ddm.receipt.bundle_id || ddm.receipt.Bundle_Id;
+} else if (ua && (ua.includes("xiashi") || ua.includes("Xiashi") || ua.includes("x1vpn"))) {
+    bundle_id = "com.x1vpn.xiashijsq";
+    console.log("[Fix] Forced bundle_id from UA: " + bundle_id);
+    // Reconstruct ddm for success
+    ddm.status = 0;
+    ddm.receipt = { bundle_id: bundle_id };
+    ddm.latest_receipt_info = [];
+}
 const yearid = `${bundle_id}.year`;
 const yearlyid = `${bundle_id}.yearly`;
 const yearlysubscription = `${bundle_id}.yearlysubscription`;
@@ -410,4 +421,3 @@ if (!anchor) {
     ddm.latest_receipt = 'ddm1023';
 }
 $done({ 'body': JSON.stringify(ddm) });
-
