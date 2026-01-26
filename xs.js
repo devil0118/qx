@@ -8,7 +8,7 @@
 hostname = buy.itunes.apple.com, cnc07api.cnc07.com
 
 */
-console.log("3333==========");
+console.log("3333=====4444=====");
 let body = $response.body;
 let url = $request.url;
 // --- 逻辑 1: iTunes 验证 (恢复订阅) ---
@@ -67,7 +67,5 @@ if (url.includes("cnc07iuapis")) {
     } catch (e) {
         $done({});
     }
-}
-$done({});
 }
 $done({});
