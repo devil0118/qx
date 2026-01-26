@@ -14,7 +14,7 @@ var url = $request.url;
 
 try {
     var obj = JSON.parse(body);
-
+    console.log("juejueziapi--------");
     // 1. 修改顶层金币
     if (obj.hasOwnProperty('userAvailableCoins')) {
         obj.userAvailableCoins = 999999;
