@@ -29,6 +29,7 @@ const yearlysubscription = `${bundle_id}.yearlysubscription`;
 const lifetimeid = `${bundle_id}.lifetime`;
 // 2. 配置列表
 const list = {
+    'qkvpn': { cm: 'timeb', hx: 'hxpda', id: "gold_yearly", latest: "ddm1023" },
     'HttpCatcher': { cm: 'timeb', hx: 'hxpda', id: "com.imxiaozhi.HttpCatcher.Pro", latest: "ddm1023" },
     'PulseWatch': { cm: 'timeb', hx: 'hxpda', id: "relaxlife_ebp", latest: "ddm1023" },
     'PicCompress': { cm: 'timea', hx: 'hxpda', id: "pc_vip_new_1y", latest: "ddm1023" },
