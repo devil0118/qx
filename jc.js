@@ -9,30 +9,48 @@ hostname = *.juejueziapi.com
 
  */
 
-var body = $response.body;
 var url = $request.url;
+
+console.log("Antigravity: 捕获到请求 " + url);
+
+if (typeof $response === "undefined") {
+    console.log("Antigravity: $response is undefined. 请检查脚本是否配置在 [rewrite_local] 或 script-response-body 下，而不是 script-request-body。");
+    $done({});
+    return;
+}
+
+var body = $response.body;
+
+if (!body) {
+    console.log("Antigravity: 响应体为空 (Status: " + $response.status + ")");
+    $done({});
+    return;
+}
 
 try {
     var obj = JSON.parse(body);
-    console.log("juejueziapi--------");
+
     // 1. 修改顶层金币
     if (obj.hasOwnProperty('userAvailableCoins')) {
+        console.log("Antigravity: 发现 userAvailableCoins，正在修改...");
         obj.userAvailableCoins = 999999;
     }
 
     // 2. 修改用户 VIP 状态
     if (obj.user) {
+        console.log("Antigravity: 发现 user 对象，正在修改 VIP 状态...");
         obj.user.is_traffic_active = 1;      // 激活流量/VIP状态
         obj.user.active_days = 3650;         // 有效期 10 年
         obj.user.status = 1;                 // 账号状态
         obj.user.points = 999999;            // 积分
         obj.user.invite_code = "888888";     // 靓号邀请码
-        // obj.user.expired_at = "2099-12-31"; // 如果有过期时间字段，也可以加上
+    } else {
+        console.log("Antigravity: 未发现 user 对象");
     }
-    
-    // 3. 修改公告为成功提示，验证脚本是否生效
+
+    // 3. 修改公告为成功提示
     if (obj.notice) {
-         obj.notice = [{
+        obj.notice = [{
             "id": "vip_hack",
             "name": "脚本已生效",
             "title": "脚本已生效",
@@ -41,8 +59,9 @@ try {
         }];
     }
 
-    $done({body: JSON.stringify(obj)});
+    $done({ body: JSON.stringify(obj) });
 } catch (e) {
-    console.log("脚本执行错误: " + e);
+    console.log("Antigravity: 脚本执行错误: " + e);
     $done({});
 }
+
