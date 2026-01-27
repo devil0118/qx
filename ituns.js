@@ -40,7 +40,7 @@ const lifetimeid = `${bundle_id}.lifetime`;
 const list = {
     'ouyou': { cm: 'timea', hx: 'hxpda', id: 'com.yearPackage', latest: 'ddm1023' },
     'com.x1vpn.xiashijsq': { cm: 'timea', hx: 'hxpda', id: 'com.x1vpn.vipAnnual', latest: 'ddm1023' },
-    'vpn': { cm: 'timea', hx: 'hxpda', id: 'yearautorenew', latest: 'ddm1023' },
+    'vpn': { cm: 'timea', hx: 'hxpda', id: 'com.yearPackage', latest: 'ddm1023' },
     'com.iuiosappijs': { cm: 'timea', hx: 'hxpda', id: 'yearautorenew', latest: 'ddm1023' }
     // ... 其他配置省略,使用时请补全完整列表
 };
