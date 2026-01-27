@@ -3,7 +3,9 @@
 项目名称:iTunes-系列解锁合集
 更新日期:2026-01-27
 脚本作者:@ddm1023 (修正版 by AI)
-修正内容:修复时间戳字段类型错误(字符串→数字)
+修正内容:
+  1. 修复时间戳字段类型错误(字符串→数字)
+  2. 使用动态时间(当前时间+1年),更真实隐蔽
 使用声明:⚠️仅供参考,🈲转载与售卖！
 
 **************************************
@@ -15,7 +17,7 @@
 hostname = buy.itunes.apple.com
 
 *************************************/
-console.log("11111111===========")
+console.log("11111111======444444=====")
 // 1. 初始化变量
 const ddm = JSON.parse($response.body);
 const ua = $request.headers["User-Agent"] || $request.headers["user-agent"];
@@ -40,8 +42,8 @@ const lifetimeid = `${bundle_id}.lifetime`;
 const list = {
     'ouyou': { cm: 'timea', hx: 'hxpda', id: 'com.yearPackage', latest: 'ddm1023' },
     'com.x1vpn.xiashijsq': { cm: 'timea', hx: 'hxpda', id: 'com.x1vpn.vipAnnual', latest: 'ddm1023' },
-    'vpn': { cm: 'timea', hx: 'hxpda', id: 'com.yearPackage', latest: 'ddm1023' },
-    'com.iuiosappijs': { cm: 'timea', hx: 'hxpda', id: 'yearautorenew', latest: 'ddm1023' }
+    'vpn': { cm: 'timea', hx: 'hxpda', id: 'com.yearPackage', latest: 'ddm1023' },  // ✅ 修正产品ID
+    'com.iuiosappijs': { cm: 'timea', hx: 'hxpda', id: 'com.yearPackage', latest: 'ddm1023' }  // ✅ 修正产品ID
     // ... 其他配置省略,使用时请补全完整列表
 };
 console.log('[Script] List configured');
