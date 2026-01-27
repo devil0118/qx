@@ -17,7 +17,7 @@
 hostname = buy.itunes.apple.com
 
 *************************************/
-console.log("11111111======444444=====")
+console.log("11111111===========")
 // 1. 初始化变量
 const ddm = JSON.parse($response.body);
 const ua = $request.headers["User-Agent"] || $request.headers["user-agent"];
@@ -146,12 +146,36 @@ for (const i in list) {
                 'auto_renew_status': '1'
             }];
             ddm.status = 0;
+            ddm.environment = 'Production';
+
+            // 补全receipt对象的必需字段
+            if (!ddm.receipt.request_date) {
+                ddm.receipt.request_date = formatDate(new Date());
+                ddm.receipt.request_date_pst = formatDatePST(new Date());
+                ddm.receipt.request_date_ms = Date.now();
+            }
+            if (!ddm.receipt.receipt_creation_date) {
+                ddm.receipt.receipt_creation_date = formatDate(purchaseDate);
+                ddm.receipt.receipt_creation_date_pst = formatDatePST(purchaseDate);
+                ddm.receipt.receipt_creation_date_ms = now;
+            }
+            if (!ddm.receipt.original_purchase_date) {
+                ddm.receipt.original_purchase_date = formatDate(purchaseDate);
+                ddm.receipt.original_purchase_date_pst = formatDatePST(purchaseDate);
+                ddm.receipt.original_purchase_date_ms = now;
+            }
+
             // Fix: Preserve original receipt if possible to bypass local signature check
             if (ddm.latest_receipt) {
                 console.log("[Fix] Preserving original latest_receipt");
             } else {
                 ddm.latest_receipt = latest;
             }
+
+            // 调试日志
+            console.log("[Debug] Product ID: " + id);
+            console.log("[Debug] Receipt items: " + data.length);
+            console.log("[Debug] Status: " + ddm.status);
         } else if (hx.includes('hxpdb')) {
             // 仅修改 in_app
             ddm.receipt.in_app = data;
