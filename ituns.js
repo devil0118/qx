@@ -1,14 +1,5 @@
 /*************************************
 
-项目名称:iTunes-系列解锁合集
-更新日期:2026-01-27
-脚本作者:@ddm1023 (修正版 by AI)
-修正内容:
-  1. 修复时间戳字段类型错误(字符串→数字)
-  2. 使用动态时间(当前时间+1年),更真实隐蔽
-使用声明:⚠️仅供参考,🈲转载与售卖！
-
-**************************************
 
 [rewrite_local]
 ^https?:\/\/buy\.itunes\.apple\.com\/verifyReceipt$ url script-response-body https://raw.githubusercontent.com/devil0118/qx/refs/heads/main/ituns.js
@@ -44,7 +35,18 @@ const list = {
     'com.x1vpn.xiashijsq': { cm: 'timea', hx: 'hxpda', id: 'com.x1vpn.vipAnnual', latest: 'ddm1023' },
     'vpn': { cm: 'timea', hx: 'hxpda', id: 'com.yearPackage', latest: 'ddm1023' },  // ✅ 修正产品ID
     'com.iuiosappijs': { cm: 'timea', hx: 'hxpda', id: 'com.yearPackage', latest: 'ddm1023' }  // ✅ 修正产品ID
-    // ... 其他配置省略,使用时请补全完整列表
+    'com.secure.vpn.proxy.fast.server': {
+        cm: 'timea',           // 含过期时间的订阅
+        hx: 'hxpda',          // 标准模式
+        id: 'com.secure.vpn.proxy.fast.server.year',  // 年订阅产品ID
+        latest: 'ddm1023'
+    },
+    'SecureVPN': {            // 通过应用名匹配
+        cm: 'timea',
+        hx: 'hxpda',
+        id: 'com.secure.vpn.proxy.fast.server.year',
+        latest: 'ddm1023'
+    },
 };
 console.log('[Script] List configured');
 
