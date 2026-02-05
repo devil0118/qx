@@ -6,10 +6,10 @@
 
 [rewrite_local]
 # RevenueCat
-^https:\/\/api\.revenuecat\.com\/.+\/(receipts$|subscribers\/.+$) url script-response-body banaapp_crack.js
+^https:\/\/api\.revenuecat\.com\/.+\/(receipts$|subscribers\/.+$) url script-response-body https://raw.githubusercontent.com/devil0118/qx/refs/heads/main/banaapp_crack.js
 
 # Backend API
-^https:\/\/api\d+\.[a-z]+api\.(com|org|net|win)\/bana\/v1\/banalogin url script-response-body banaapp_crack.js
+^https:\/\/api\d+\.[a-z]+api\.(com|org|net|win)\/bana\/v1\/banalogin url script-response-body https://raw.githubusercontent.com/devil0118/qx/refs/heads/main/banaapp_crack.js
 
 [mitm]
 hostname = api.revenuecat.com, api*.bkrapi.com, api*.bjpapi.com, api*.busapi.org, api*.*api.com, api*.*api.org, api*.*api.net, api*.*api.win
