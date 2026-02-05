@@ -14,18 +14,39 @@ if (typeof $response !== "undefined") {
   let body = JSON.parse($response.body || null);
 
   if (body && body.status === 1) {
-    // 修改用户等级为最高等级
+    // --- 1. 修改外层控制字段 ---
     body.level = 3;
     body.class = 3;
-
-    // 修改过期时间为 2999 年
-    body.class_expire = "2999-12-31 23:59:59";
-    body.expired = "2999-12-31 23:59:59";
-    body.exp = 32503651199;  // Unix 时间戳
-
-    // 修改套餐名称
     body.planName = "Premium VIP";
     body.plan = "Premium VIP";
+
+    // 修改过期时间
+    body.class_expire = "2999-12-31 23:59:59";
+    body.expired = "2999-12-31 23:59:59";
+    body.exp = 32503651199;
+
+    // 修改流量显示 (字符串格式)
+    body.used_traffic = "0B";
+    body.transfer_enable = "99.00TB";
+    body.remaining_traffic = "99.00TB";
+
+    // --- 2. 修改嵌套的 ip1 对象 (核心数据) ---
+    if (body.ip1) {
+      body.ip1.level = 3;
+      body.ip1.class = 3;
+      body.ip1.u = 0;              // 已用流量清零
+      body.ip1.d = 0;              // 已用流量清零
+      // 99TB 对应的字节数 (99 * 1024^4)
+      body.ip1.transfer_enable = 108850559123456;
+
+      // 同步过期时间
+      body.ip1.class_expire = "2999-12-31 23:59:59";
+      body.ip1.expire_in = "2999-12-31 23:59:59";
+      body.ip1.expire_time = 32503651199;
+
+      // 其他会员标识
+      body.ip1.user_name = "Premium User";
+    }
 
     obj.body = JSON.stringify(body);
   }
