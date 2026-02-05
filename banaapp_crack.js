@@ -1,58 +1,104 @@
 /*******************************
+香蕉VPN 全能破解脚本 (终极增强版)
+版本: 7.0
+日期: 2026-02-05
+更新：基于砸壳分析，注入潜在的内部字段
 
 [rewrite_local]
-^https:\/\/api\d+\.[a-z]+api\.(com|org|net)\/bana\/v1\/banalogin url script-response-body https://raw.githubusercontent.com/devil0118/qx/refs/heads/main/banaapp_crack.js
-[mitm] 
-hostname = api*.bkrapi.com, api*.bjpapi.com, api*.busapi.org, api*.*api.com, api*.*api.org, api*.*api.net
+# RevenueCat
+^https:\/\/api\.revenuecat\.com\/.+\/(receipts$|subscribers\/.+$) url script-response-body banaapp_crack.js
 
+# Backend API
+^https:\/\/api\d+\.[a-z]+api\.(com|org|net|win)\/bana\/v1\/banalogin url script-response-body banaapp_crack.js
+
+[mitm]
+hostname = api.revenuecat.com, api*.bkrapi.com, api*.bjpapi.com, api*.busapi.org, api*.*api.com, api*.*api.org, api*.*api.net, api*.*api.win
 *******************************/
 
+const url = $request.url;
 let obj = {};
 
-if (typeof $response !== "undefined") {
-  let body = JSON.parse($response.body || null);
-
-  if (body && body.status === 1) {
-    // --- 1. 修改外层基本信息 ---
-    body.level = 3;
-    body.class = 3;
-    body.class_expire = "2099-12-31 23:59:59";
-    body.expired = "2099-12-31 23:59:59";
-    body.exp = 4102415999;
-    body.transfer_enable = "99TB";
-    body.remaining_traffic = "99TB";
-
-    // --- 2. 深度修改 ip1 数据 (尝试管理员和最高权限) ---
-    if (body.ip1) {
-      body.ip1.level = 3;
-      body.ip1.class = 3;
-      body.ip1.is_admin = true;        // 尝试开启管理员标识
-      body.ip1.node_group = 3;         // 匹配节点分组
-      body.ip1.node_speedlimit = 0;    // 0 通常表示不限速
-      body.ip1.node_connector = 10;    // 增加并发连接数
-
-      body.ip1.transfer_enable = 108850559123456;
-      body.ip1.u = 0;
-      body.ip1.d = 0;
-      body.ip1.class_expire = "2099-12-31 23:59:59";
-      body.ip1.expire_in = "2099-12-31 23:59:59";
+// --- 1. 处理 RevenueCat API ---
+if (url.includes("revenuecat.com")) {
+  if (typeof $response == "undefined") {
+    delete $request.headers["x-revenuecat-etag"];
+    delete $request.headers["X-RevenueCat-ETag"];
+    obj.headers = $request.headers;
+  } else {
+    let body = JSON.parse(typeof $response != "undefined" && $response.body || null);
+    if (body && body.subscriber) {
+      const product_id = "rc_annu";
+      const entitlement = "banavip";
+      let data = {
+        "expires_date": "2999-12-31T23:59:59Z",
+        "original_purchase_date": "2021-01-01T00:00:00Z",
+        "purchase_date": "2021-01-01T00:00:00Z",
+        "ownership_type": "PURCHASED",
+        "store": "app_store",
+        "is_sandbox": false,
+        "period_type": "normal"
+      };
+      let subscriber = body.subscriber;
+      if (!subscriber.entitlements) subscriber.entitlements = {};
+      if (!subscriber.subscriptions) subscriber.subscriptions = {};
+      subscriber.entitlements[entitlement] = JSON.parse(JSON.stringify(data));
+      subscriber.entitlements[entitlement].product_identifier = product_id;
+      subscriber.subscriptions[product_id] = data;
+      obj.body = JSON.stringify(body);
     }
+  }
+}
+// --- 2. 处理 Backend API (banalogin) ---
+else if (url.includes("/bana/v1/banalogin")) {
+  if (typeof $response !== "undefined") {
+    let body = JSON.parse($response.body || null);
 
-    // --- 3. 核心修改：处理嵌套的 config 字符串 ---
-    // 部分 App 会直接解析并使用这个 JSON 字符串里的配置
-    if (body.config) {
-      try {
-        // 将 config 字符串里的等级和分组信息也强制替换
-        // 注意：由于是字符串，我们先尝试简单的正则替换
-        body.config = body.config.replace(/"level":\s*1/g, '"level":3');
-        body.config = body.config.replace(/"class":\s*1/g, '"class":3');
-        body.config = body.config.replace(/"node_group":\s*\d+/g, '"node_group":3');
-      } catch (e) {
-        console.log("Config string modification failed: " + e);
+    if (body && body.status === 1) {
+      // 基本 VIP 信息
+      body.level = 3;
+      body.class = 3;
+      body.class_expire = "2999-12-31 23:59:59";
+      body.expired = "2999-12-31 23:59:59";
+      body.exp = 32503651199;
+      body.planName = "Premium VIP";
+      body.plan = "Premium VIP";
+      body.transfer_enable = "99TB";
+      body.remaining_traffic = "99TB";
+      body.used_traffic = "0B";
+
+      // 核心权限修改
+      if (body.ip1) {
+        body.ip1.level = 3;
+        body.ip1.class = 3;
+        body.ip1.is_admin = true;
+        body.ip1.node_group = 3;
+        body.ip1.node_speedlimit = 0;
+        body.ip1.node_connector = 50;
+        body.ip1.transfer_enable = 108850559123456;
+        body.ip1.u = 0;
+        body.ip1.d = 0;
+        body.ip1.class_expire = "2999-12-31 23:59:59";
+        body.ip1.expire_in = "2999-12-31 23:59:59";
+
+        // --- 注入砸壳发现的潜在隐藏字段 ---
+        // 虽然响应里不一定有，但注入进去不亏
+        body.ip1._BauserToken = body.token;
+        body.ip1.isValid = true;
+        body.ip1.isVIP = true;
       }
-    }
 
-    obj.body = JSON.stringify(body);
+      // 修改 config 字符串
+      if (body.config) {
+        try {
+          body.config = body.config.replace(/"level":\s*\d+/g, '"level":3');
+          body.config = body.config.replace(/"class":\s*\d+/g, '"class":3');
+          body.config = body.config.replace(/"node_group":\s*\d+/g, '"node_group":3');
+          body.config = body.config.replace(/"node_speedlimit":\s*\d+/g, '"node_speedlimit":0');
+        } catch (e) { }
+      }
+
+      obj.body = JSON.stringify(body);
+    }
   }
 }
 
