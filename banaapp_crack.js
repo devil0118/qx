@@ -1,35 +1,35 @@
 /*******************************
 
 [rewrite_local]
-^https:\/\/api\.revenuecat\.com\/.+\/(receipts$|subscribers\/.+$) url script-response-body https://raw.githubusercontent.com/devil0118/qx/refs/heads/main/banaapp_crack.js
-^https:\/\/api\.revenuecat\.com\/.+\/(receipts$|subscribers\/.+$) url script-request-header https://raw.githubusercontent.com/devil0118/qx/refs/heads/main/banaapp_crack.js
-
+^https:\/\/api01\.bkrapi\.com\/bana\/v1\/banalogin url script-response-body https://raw.githubusercontent.com/devil0118/qx/refs/heads/main/banaapp_crack.js
 [mitm] 
-hostname = api.revenuecat.com
+hostname = api01.bkrapi.com
 
 *******************************/
 
 let obj = {};
 
-if (typeof $response == "undefined") {
-    delete $request.headers["x-revenuecat-etag"];
-    delete $request.headers["X-RevenueCat-ETag"];
-    obj.headers = $request.headers;
-} else {
-    let body = JSON.parse(typeof $response != "undefined" && $response.body || null);
-    if (body && body.subscriber) {
-        const product_id = "rc_mont";
-        const entitlement = "banavip";
-        let data = {
-            "expires_date": "2999-01-01T00:00:00Z",
-            "original_purchase_date": "2021-01-01T00:00:00Z",
-            "purchase_date": "2021-01-01T00:00:00Z",
-            "ownership_type": "PURCHASED",
-            "store": "app_store"
-        };
-        let subscriber = body.subscriber;
-        subscriber.entitlements[(entitlement)] = subscriber.subscriptions[(product_id)] = data;
-        subscriber.entitlements[(entitlement)].product_identifier = product_id;
+if (typeof $response !== "undefined") {
+    let body = JSON.parse($response.body || null);
+
+    if (body && body.status === 1) {
+        // 修改用户等级为最高等级
+        body.level = 3;           // 用户等级改为 3
+        body.class = 3;           // class 字段也改为 3
+
+        // 修改会员过期时间为 2999 年
+        body.class_expire = "2999-12-31 23:59:59";
+        body.expired = "2999-12-31 23:59:59";
+        body.exp = 32503651199;  // 2999-12-31 的 Unix 时间戳
+
+        // 修改套餐名称（可选）
+        body.planName = "VIP Premium";
+        body.plan = "VIP Premium";
+
+        // 修改流量限制（可选 - 设置为 100GB）
+        body.transfer_enable = "107374182400";  // 100GB in bytes
+        body.remaining_traffic = "100GB";
+
         obj.body = JSON.stringify(body);
     }
 }
